@@ -2,7 +2,6 @@
 
 This is a small webapplication, build with Flask. The point is, to have a USB Termometer connected to a Raspberry Pi (Or what every you wish). It will then record the temperature, every 15 minuts.
 
-# Image
 ![Image of running application](https://github.com/Silverbaq/USBTempFlask/blob/master/images/App.png)
 
 # Dependencies
