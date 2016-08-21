@@ -1,0 +1,120 @@
+{% extends "layout.html" %}
+
+{% include 'top.html' %}
+
+{% block body %}
+    <!-- Should be in HEAD-->
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+
+        // Load the Visualization API and the corechart package.
+        google.charts.load('current', {'packages': ['corechart']});
+
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.charts.setOnLoadCallback(drawChart);
+
+        // Callback that creates and populates a data table,
+        // instantiates the pie chart, passes in the data and
+        // draws it.
+        function drawChart() {
+            // Create the data table.
+
+            var data = google.visualization.arrayToDataTable([
+                ['Time', 'Temperature'],
+                {%  for t in tempetures %}
+                    ['{{ t.time.strftime("%d-%m-%y %H:%M")}}', {{ t.temperature }}],
+                {% endfor %}
+            ]);
+
+
+            // Set chart options
+            var options = {
+                'title': 'Temperatures',
+                'width': 1100,
+                'height': 500,
+            };
+
+            // Instantiate and draw our chart, passing in some options.
+            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+    </script>
+    <!-- Should be in HEAD-->
+
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+
+                <form action="timeperiod" method="get">
+                    <div class='col-md-5'>
+                        <div class="form-group">
+                            <div class='input-group date' id='datetimepicker6'>
+                                <input type='text' name="start" class="form-control"/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='col-md-5'>
+                        <div class="form-group">
+                            <div class='input-group date' id='datetimepicker7'>
+                                <input type='text' name="end" class="form-control"/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <input type="submit" class="btn btn-default" value="Find"/>
+
+
+                </form>
+            </div>
+        </div>
+
+
+        <script type="text/javascript">
+            $(function () {
+                $('#datetimepicker6').datetimepicker();
+                $('#datetimepicker7').datetimepicker({
+                    useCurrent: false //Important! See issue #1075
+                });
+                $("#datetimepicker6").on("dp.change", function (e) {
+                    $('#datetimepicker7').data("DateTimePicker").minDate(e.date);
+                });
+                $("#datetimepicker7").on("dp.change", function (e) {
+                    $('#datetimepicker6').data("DateTimePicker").maxDate(e.date);
+                });
+            });
+        </script>
+
+
+        <div id="chart_div"></div>
+
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Temperature</th>
+                <th>Location</th>
+                <th>Time</th>
+            </tr>
+            </thead>
+            {% for temp in tempetures %}
+                <tr>
+                    <th>{{ temp.temperature }}</th>
+                    <th>{{ temp.location }}</th>
+                    <th>{{ temp.time.strftime("%Y-%m-%d %H:%M:%S") }}</th>
+                </tr>
+            {% endfor %}
+        </table>
+
+    </div>
+
+{% endblock %}
